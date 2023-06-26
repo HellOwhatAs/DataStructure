@@ -2,11 +2,13 @@ from typing import Iterable, Any
 try:
     from .List import List
     from .Array import Array
+    from ..tree.PriorityQueue import PriorityQueue
 except ImportError:
     import sys, os
     sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
     from DataStructure.linear.List import List
     from DataStructure.linear.Array import Array
+    from DataStructure.tree.PriorityQueue import PriorityQueue
     sys.path.pop()
     del sys, os
 
