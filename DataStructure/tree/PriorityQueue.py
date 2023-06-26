@@ -61,20 +61,22 @@ class PriorityQueue:
     def empty(self):
         return self.length == 0
     
+    def __repr__(self):
+        return f"{type(self).__name__}({[self.data[i] for i in range(1, self.data.length)]})"
 
 if __name__ == '__main__':
     pq = PriorityQueue([789, 123, 456])
     pq.push(23)
-    print(pq.data)
+    print(pq)
     pq.push(5)
-    print(pq.data)
+    print(pq)
     pq.push(25)
-    print(pq.data)
+    print(pq)
     pq.push(-120)
-    print(pq.data)
+    print(pq)
     pq.push(23000)
-    print(pq.data)
+    print(pq)
     pq.push(20)
-    print(pq.data)
+    print(pq)
     while not pq.empty():
         print(pq.pop())

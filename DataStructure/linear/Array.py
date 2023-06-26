@@ -8,6 +8,7 @@ class Array:
         self.maxlength = len(self.data)
 
     def __getitem__(self, idx: int):
+        if idx < 0 or idx >= self.length: raise IndexError(f"{type(self).__name__} index out of range")
         return self.data[idx]
     
     def __setitem__(self, idx: int, val: Any):

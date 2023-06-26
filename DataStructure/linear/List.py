@@ -36,6 +36,7 @@ class List:
         return f"{type(self).__name__}({vals})"
     
     def __getitem__(self, idx: int):
+        if idx < 0 or idx >= self.length: raise IndexError(f"{type(self).__name__} index out of range")
         p = self.head.next
         for _ in range(idx): p = p.next
         return p.val
