@@ -1,4 +1,5 @@
-def KMP(a: str, b: str):
+def kmp(a: str, b: str):
+    raise NotImplementedError("KMP not implemented")
     i, j = 0, 0
     P = [0, 0, 1, 2, 3, 0, 0]
     ret = []
@@ -20,4 +21,4 @@ def func(x: str):
 A = "abababaababacbababacb"
 B = "ababacb"
 
-print(KMP(A, B))
+print(kmp(A, B))
