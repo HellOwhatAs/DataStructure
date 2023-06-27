@@ -1,9 +1,5 @@
 from typing import Any
 
-
-from DataStructure.tree.BinaryTree import BinaryTree
-
-
 try:
     from ..tree.BinaryTree import BinaryTree
 except ImportError:
@@ -14,5 +10,4 @@ except ImportError:
     del sys, os
 
 class AVL(BinaryTree):
-    def __init__(self, val: Any, left: 'AVL|None' = None, right: 'AVL|None' = None):
-        raise NotImplementedError("AVL not implemented")
+    raise NotImplementedError("AVL not implemented")
