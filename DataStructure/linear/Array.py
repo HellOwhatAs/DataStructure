@@ -50,6 +50,10 @@ class Array:
     def __len__(self):
         return self.length
     
+    def reverse(self):
+        for i in range(len(self) // 2):
+            self[i], self[len(self) - 1 - i] = self[len(self) - 1 - i], self[i]
+    
 if __name__ == '__main__':
 
     a = Array([1,2,3,4])
@@ -58,7 +62,11 @@ if __name__ == '__main__':
     print(a)
     a.push(123)
     print(a)
+    a.reverse()
+    print(a)
     a.insert(0, 114)
+    print(a)
+    a.reverse()
     print(a)
     print(a.pop(1))
     print(a)

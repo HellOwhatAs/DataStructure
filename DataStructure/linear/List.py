@@ -66,6 +66,9 @@ class List:
     def empty(self):
         return self.length == 0
 
+    def reverse(self):
+        raise NotImplementedError("reverse of List not implemented")
+
 
 if __name__ == '__main__':
     l = List([1,2,3,4])
