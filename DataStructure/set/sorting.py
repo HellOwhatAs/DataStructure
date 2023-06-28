@@ -144,8 +144,7 @@ def MergeSort(a: List):
     mid = len(a) // 2
     return __merge(MergeSort(a[:mid]), MergeSort(a[mid:]))
 
-def BucketSort(a: List, *, num_buckets: int = 10):
-    assert all(i >= 0 for i in a)
+def __non_neg_bucketsort(a: List, *, num_buckets: int = 10):
     div = 1
     buckets = [[] for _ in range(num_buckets)]
     while True:
@@ -161,9 +160,23 @@ def BucketSort(a: List, *, num_buckets: int = 10):
         div *= num_buckets
     return a
 
+def BucketSort(a: List, *, num_buckets: int = 10):
+    negs, a1 = [], []
+    for elem in a:
+        if elem < 0: negs.append(-elem)
+        else: a1.append(elem)
+
+    a2 = __non_neg_bucketsort(a1, num_buckets = num_buckets)
+
+    if negs:
+        ret = [-elem for elem in reversed(__non_neg_bucketsort(negs, num_buckets = num_buckets))]
+        ret.extend(a2)
+        return ret
+    return a2
+
 if __name__ == '__main__':
     import random
-    l = list(range(1000000))
+    l = list(range(-50000, 50000))
     l = [*l, *l, *l]
     random.shuffle(l)
     print(l)
