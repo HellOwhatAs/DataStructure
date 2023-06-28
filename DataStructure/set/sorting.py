@@ -120,15 +120,36 @@ def QuickSort(a: List, start: int = 0, end: int = None, *, inplace: bool = False
         QuickSort(a, start, mid - 1, inplace=True)
         QuickSort(a, mid + 1, end, inplace=True)
         return a
-        
 
+def __merge(a: List, b: List):
+    ret = []
+    i, j = 0, 0
+    while i < len(a) and j < len(b):
+        if a[i] < b[j]:
+            ret.append(a[i])
+            i += 1
+        else:
+            ret.append(b[j])
+            j += 1
+    while i < len(a):
+        ret.append(a[i])
+        i += 1
+    while j < len(b):
+        ret.append(b[j])
+        j += 1
+    return ret
+
+def MergeSort(a: List):
+    if len(a) <= 1: return a
+    mid = len(a) // 2
+    return __merge(MergeSort(a[:mid]), MergeSort(a[mid:]))
 
 
 if __name__ == '__main__':
     import random
-    l = list(range(100))
+    l = list(range(100000))
     l = [*l, *l, *l]
     random.shuffle(l)
     print(l)
-    print(QuickSort(l, inplace=True) == sorted(l))
-    print(l)
+    print(MergeSort(l) == sorted(l))
+    # print(l)
