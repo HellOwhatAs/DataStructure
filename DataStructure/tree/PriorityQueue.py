@@ -13,12 +13,12 @@ class PriorityQueue:
         self.data = Array([None])
         if init is not None:
             for elem in init: self.data.push(elem)
-            for idx in reversed(range(1, self.length // 2)):
+            for idx in reversed(range(1, len(self) // 2 + 1)):
                 self.__percolate_down(idx)
     
     @property
     def length(self):
-        return self.data.length - 1
+        return len(self.data) - 1
     
     def __len__(self):
         return self.length
@@ -30,7 +30,7 @@ class PriorityQueue:
             self.__percolate_up(idx // 2)
 
     def __percolate_down(self, idx: int):
-        if idx * 2 + 1 < self.data.length:
+        if idx * 2 + 1 < len(self.data):
             left_idx, right_idx = idx * 2, idx * 2 + 1
             left_val, right_val = self.data[left_idx], self.data[right_idx]
             if self.data[idx] > min(left_val, right_val):
@@ -40,14 +40,14 @@ class PriorityQueue:
                 else:
                     self.data[left_idx], self.data[idx] = self.data[idx], self.data[left_idx]
                     self.__percolate_down(left_idx)
-        elif idx *2 < self.data.length:
+        elif idx *2 < len(self.data):
             if self.data[idx] > self.data[idx * 2]:
                 self.data[idx], self.data[idx * 2] = self.data[idx * 2], self.data[idx]
                 self.__percolate_down(idx * 2)
 
     def push(self, val: Any):
         self.data.push(val)
-        self.__percolate_up(self.length)
+        self.__percolate_up(len(self))
     
     def top(self):
         return self.data[1]
@@ -59,13 +59,13 @@ class PriorityQueue:
         return ret
 
     def empty(self):
-        return self.length == 0
+        return len(self) == 0
     
     def __repr__(self):
-        return f"{type(self).__name__}({[self.data[i] for i in range(1, self.data.length)]})"
+        return f"{type(self).__name__}({[self.data[i] for i in range(1, len(self.data))]})"
 
 if __name__ == '__main__':
-    pq = PriorityQueue([789, 123, 456])
+    pq = PriorityQueue([5,4,3,2,1])
     pq.push(23)
     print(pq)
     pq.push(5)
