@@ -86,13 +86,49 @@ def BubbleSort(a: List, *, inplace: bool = False):
         if flag: break
     return a
 
-def QuickSort(a: List, *, inplace: bool = False):
-    if not inplace: a = deepcopy(a)
-    raise NotImplementedError("ShellSort not implemented")
+def __divide(a: List, start: int, end: int):
+    if end - start + 1 <= 1: return start
+    pivot = a[start]
+    activate = True
+    while start < end:
+        if activate:
+            if a[end] > pivot: end -= 1
+            else:
+                a[start] = a[end]
+                start += 1
+                activate = False
+        else:
+            if a[start] < pivot: start += 1
+            else:
+                a[end] = a[start]
+                end -= 1
+                activate = True
+    a[start] = pivot
+    return start
+
+
+def QuickSort(a: List, start: int = 0, end: int = None, *, inplace: bool = False):
+    if end is None: end = len(a) - 1
+    if not inplace:
+        a = a[start: end + 1]
+        if len(a) <= 1: return a
+        pivot = a[0]
+        return QuickSort([i for i in a if i < pivot]) + [pivot] * (a.count(pivot)) + QuickSort([i for i in a if i > pivot])
+    else:
+        if end - start + 1 <= 1: return a
+        mid = __divide(a, start, end)
+        QuickSort(a, start, mid - 1, inplace=True)
+        QuickSort(a, mid + 1, end, inplace=True)
+        return a
+        
+
+
 
 if __name__ == '__main__':
     import random
     l = list(range(100))
+    l = [*l, *l, *l]
     random.shuffle(l)
-    print(BubbleSort(l, inplace=True) == sorted(l))
+    print(l)
+    print(QuickSort(l, inplace=True) == sorted(l))
     print(l)
