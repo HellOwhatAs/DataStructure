@@ -16,8 +16,8 @@ class HuffmanTree(BinaryTree):
     def __init__(self, val: Any, weight: Real, left: Optional['HuffmanTree'] = None, right: Optional['HuffmanTree'] = None):
         super().__init__(val, left, right)
         self.weight = weight
-        self.left: 'HuffmanTree|None'
-        self.right: 'HuffmanTree|None'
+        self.left: Optional[HuffmanTree]
+        self.right: Optional[HuffmanTree]
 
     @classmethod
     def build(cls, data: Dict[Any, Real]):
