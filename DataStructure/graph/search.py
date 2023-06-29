@@ -40,3 +40,5 @@ if __name__ == '__main__':
         g.add_edge(edge[0]-1, edge[1]-1)
 
     dfs(g, lambda x, y: print(x + 1, end=' '), newtree=print)
+
+    print(g.edge_weight(2, 0))

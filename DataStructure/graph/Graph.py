@@ -17,6 +17,9 @@ class Graph(ABC):
     def exist_edge(self, start: int, end: int):...
 
     @abstractmethod
+    def edge_weight(self, start: int, end: int) -> Real:...
+
+    @abstractmethod
     def remove_edge(self, start: int, end: int):...
 
     @abstractmethod
@@ -35,6 +38,9 @@ class AdjMatrixGraph(Graph):
 
     def exist_edge(self, start: int, end: int):
         return not isinf(self.mat[start][end])
+
+    def edge_weight(self, start: int, end: int) -> Real:
+        return self.mat[start][end]
 
     def remove_edge(self, start: int, end: int):
         self.mat[start][end] = self.mat[end][start] = None
@@ -59,6 +65,9 @@ class DirectedAdjMatrixGraph(Graph):
     def exist_edge(self, start: int, end: int):
         return not isinf(self.mat[start][end])
 
+    def edge_weight(self, start: int, end: int) -> Real:
+        return self.mat[start][end]
+
     def remove_edge(self, start: int, end: int):
         self.mat[start][end] = None
 
@@ -81,6 +90,9 @@ class AdjListGraph(Graph):
 
     def exist_edge(self, start: int, end: int):
         return end in self.list[start]
+
+    def edge_weight(self, start: int, end: int) -> Real:
+        return self.list[start][end] if end in self.list[start] else inf
     
     def remove_edge(self, start: int, end: int):
         self.list[start].pop(end)
@@ -103,6 +115,9 @@ class DirectedAdjListGraph(Graph):
 
     def exist_edge(self, start: int, end: int):
         return end in self.list[start]
+    
+    def edge_weight(self, start: int, end: int) -> Real:
+        return self.list[start][end] if end in self.list[start] else inf
     
     def remove_edge(self, start: int, end: int):
         self.list[start].pop(end)
