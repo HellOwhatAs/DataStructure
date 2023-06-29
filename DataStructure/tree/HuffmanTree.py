@@ -1,13 +1,14 @@
 from typing import Any, Dict, Optional
 from numbers import Real
-import heapq
 
 try:
     from .BinaryTree import BinaryTree
+    from .PriorityQueue import PriorityQueue
 except ImportError:
     import sys, os
     sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
     from DataStructure.tree.BinaryTree import BinaryTree
+    from DataStructure.tree.PriorityQueue import PriorityQueue
     sys.path.pop()
     del sys, os
 
@@ -20,12 +21,11 @@ class HuffmanTree(BinaryTree):
 
     @classmethod
     def build(cls, data: Dict[Any, Real]):
-        heap = [cls(k, v) for k, v in data.items()]
-        heapq.heapify(heap)
+        heap = PriorityQueue([cls(k, v) for k, v in data.items()])
         while len(heap) > 1:
-            a, b = heapq.heappop(heap), heapq.heappop(heap)
-            heapq.heappush(heap, cls(None, a.weight + b.weight, a, b))
-        return heap[0]
+            a, b = heap.pop(), heap.pop()
+            heap.push(cls(None, a.weight + b.weight, a, b))
+        return heap.top()
     
     def __gt__(self, other: 'HuffmanTree'):
         return self.weight > other.weight
@@ -46,7 +46,7 @@ class HuffmanTree(BinaryTree):
 
 
 if __name__ == '__main__':
-    hftree = HuffmanTree.build({
+    data = {
         'a': 10,
         'e': 15,
         'i': 12,
@@ -54,7 +54,9 @@ if __name__ == '__main__':
         't': 4,
         ' ': 13,
         '\n': 1
-    })
+    }
+    hftree = HuffmanTree.build(data)
     print(hftree)
     print(list(hftree.getcode()))
+    print(sum(data[k]*len(v) for k, v in hftree.getcode()))
     print(hftree.size, hftree.depth)

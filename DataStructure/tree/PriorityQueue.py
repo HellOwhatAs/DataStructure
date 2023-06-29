@@ -25,7 +25,7 @@ class PriorityQueue:
     
     def __percolate_up(self, idx: int):
         if idx == 1: return
-        if self.data[idx // 2] >= self.data[idx]:
+        if self.data[idx // 2] > self.data[idx]:
             self.data[idx // 2], self.data[idx] = self.data[idx], self.data[idx // 2]
             self.__percolate_up(idx // 2)
 
