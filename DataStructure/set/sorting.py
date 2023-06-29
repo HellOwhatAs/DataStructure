@@ -32,8 +32,21 @@ def BinaryInsertSort(a: List, *, inplace: bool = False):
         a[idx] = tmp
     return a
 
-def ShellSort(a: List):
-    raise NotImplementedError("ShellSort not implemented")
+def ShellSort(a: List, *, inplace: bool = False):
+    if not inplace: a = deepcopy(a)
+    step = len(a) // 2
+    while step:
+        for i in range(step):
+            for j in range(i + step, len(a), step):
+                tmp = a[j]
+                for k in range(j - step, -1, -step):
+                    if a[k] <= tmp:
+                        a[k + step] = tmp
+                        break
+                    a[k + step] = a[k]
+                else: a[i] = tmp
+        step //= 2
+    return a
 
 def SelectSort(a: List, *, inplace: bool = False):
     if not inplace: a = deepcopy(a)
@@ -176,9 +189,9 @@ def BucketSort(a: List, *, num_buckets: int = 10):
 
 if __name__ == '__main__':
     import random
-    l = list(range(-50000, 50000))
-    l = [*l, *l, *l]
+    l = list(range(-5, 5))
+    l = [*l] * 3
     random.shuffle(l)
     print(l)
-    print(BucketSort(l) == sorted(l))
-    # print(l)
+    print(ShellSort(l, inplace=True) == sorted(l))
+    print(l)
