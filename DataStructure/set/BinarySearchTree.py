@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional
 
 try:
     from ..tree.BinaryTree import BinaryTree
@@ -10,7 +10,7 @@ except ImportError:
     del sys, os
 
 class BinarySearchTree(BinaryTree):
-    def __init__(self, val: Any = None, left: 'BinarySearchTree|None' = None, right: 'BinarySearchTree|None' = None, father: 'BinarySearchTree|None' = None):
+    def __init__(self, val: Optional[Any] = None, left: Optional['BinarySearchTree'] = None, right: Optional['BinarySearchTree'] = None, father: Optional['BinarySearchTree'] = None):
         if val is None: left = right = None
         if left is not None:
             if left.father is None: left.father = self
@@ -76,7 +76,7 @@ class BinarySearchTree(BinaryTree):
         self.left = other.left
         self.right  = other.right
     
-    def __detach_self(self, replacement: 'BinarySearchTree|None' = None):
+    def __detach_self(self, replacement: Optional['BinarySearchTree'] = None):
         if self.father is None: return
         if replacement is not None: replacement.father = self.father
         if self.father.left is self:

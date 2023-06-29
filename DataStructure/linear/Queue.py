@@ -1,4 +1,4 @@
-from typing import Iterable, Any
+from typing import Iterable, Any, Optional
 try:
     from .List import List
     from .Array import Array
@@ -13,7 +13,7 @@ except ImportError:
     del sys, os
 
 class Queue(List):
-    def __init__(self, init: Iterable[Any] = None):
+    def __init__(self, init: Optional[Iterable[Any]] = None):
         super().__init__(init)
 
     def pop(self, idx: int = 0):

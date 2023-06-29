@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from copy import deepcopy
 try:
     from .binary_search import binary_search
@@ -119,8 +119,7 @@ def __divide(a: List, start: int, end: int):
     a[start] = pivot
     return start
 
-
-def QuickSort(a: List, start: int = 0, end: int = None, *, inplace: bool = False):
+def QuickSort(a: List, start: int = 0, end: Optional[int] = None, *, inplace: bool = False):
     if end is None: end = len(a) - 1
     if not inplace:
         a = a[start: end + 1]

@@ -1,4 +1,4 @@
-from typing import Any, List, Dict, overload
+from typing import Any, List, Dict, Optional, overload
 try:
     from ..linear.Queue import Queue
 except ImportError:
@@ -9,7 +9,7 @@ except ImportError:
     del sys, os
 
 class BinaryTree:
-    def __init__(self, val: Any, left: 'BinaryTree|None' = None, right: 'BinaryTree|None' = None):
+    def __init__(self, val: Any, left: Optional['BinaryTree'] = None, right: Optional['BinaryTree'] = None):
         self.val = val
         self.left, self.right = left, right
     
@@ -58,7 +58,7 @@ class BinaryTree:
 
 
     @classmethod
-    def build(cls,* , pre_order: List[Any] = None, mid_order: List[Any] = None, post_order: List[Any] = None, level_order: List[Any] = None):
+    def build(cls,* , pre_order: Optional[List[Any]] = None, mid_order: Optional[List[Any]] = None, post_order: Optional[List[Any]] = None, level_order: Optional[List[Any]] = None):
         if mid_order is not None and pre_order is not None and post_order is level_order is None:
             assert len(mid_order) == len(pre_order)
             return cls.__build_via_pre_mid(pre_order, mid_order, 0, 0, len(mid_order), {elem: i for i, elem in enumerate(mid_order)})

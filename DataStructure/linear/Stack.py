@@ -1,4 +1,4 @@
-from typing import Iterable, Any
+from typing import Iterable, Any, Optional
 try:
     from .Array import Array
 except ImportError:
@@ -9,7 +9,7 @@ except ImportError:
     del sys, os
 
 class Stack(Array):
-    def __init__(self, init: Iterable[Any] = None):
+    def __init__(self, init: Optional[Iterable[Any]] = None):
         super().__init__(init)
     def top(self):
         return self.data[self.length - 1]

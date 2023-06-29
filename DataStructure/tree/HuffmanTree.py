@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 from numbers import Real
 import heapq
 
@@ -12,7 +12,7 @@ except ImportError:
     del sys, os
 
 class HuffmanTree(BinaryTree):
-    def __init__(self, val: Any, weight: Real, left: 'HuffmanTree|None' = None, right: 'HuffmanTree|None' = None):
+    def __init__(self, val: Any, weight: Real, left: Optional['HuffmanTree'] = None, right: Optional['HuffmanTree'] = None):
         super().__init__(val, left, right)
         self.weight = weight
         self.left: 'HuffmanTree|None'

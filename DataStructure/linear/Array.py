@@ -1,7 +1,7 @@
-from typing import Iterable, Any
+from typing import Iterable, Any, Optional
 
 class Array:
-    def __init__(self, init: Iterable[Any] = None):
+    def __init__(self, init: Optional[Iterable[Any]] = None):
         self.data = [i for i in init] if init else []
         self.length = len(self.data)
         self.data.extend([0] * max(20, self.length))
@@ -27,7 +27,7 @@ class Array:
         self.data[self.length] = val
         self.length += 1
 
-    def pop(self, idx: int = None):
+    def pop(self, idx: Optional[int] = None):
         if idx is None:
             self.length -= 1
             return self.data[self.length]

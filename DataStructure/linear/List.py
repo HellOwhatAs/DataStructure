@@ -1,12 +1,12 @@
-from typing import Iterable, Any
+from typing import Iterable, Any, Optional
 
 class Node:
-    def __init__(self, val: Any, next: 'Node|None'):
+    def __init__(self, val: Any, next: Optional['Node']):
         self.val = val
         self.next = next
 
 class List:
-    def __init__(self, init: Iterable[Any] = None):
+    def __init__(self, init: Optional[Iterable[Any]] = None):
         self.head = Node(0, None)
         self.tail = self.head
         if init:

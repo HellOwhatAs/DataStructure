@@ -1,6 +1,6 @@
-from typing import List, Any
+from typing import List, Any, Optional
 
-def binary_search(ascending: List[Any], val: Any, start: int = 0, end: int = None):
+def binary_search(ascending: List[Any], val: Any, start: int = 0, end: Optional[int] = None):
     if end is None: end = len(ascending)
     if start == end: return start
     mid_idx = (start + end) // 2

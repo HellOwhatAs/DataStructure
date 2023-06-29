@@ -1,4 +1,4 @@
-from typing import Iterable, Any
+from typing import Iterable, Any, Optional
 try:
     from ..linear.Array import Array
 except ImportError:
@@ -9,7 +9,7 @@ except ImportError:
     del sys, os
 
 class PriorityQueue:
-    def __init__(self, init: Iterable[Any] = None):
+    def __init__(self, init: Optional[Iterable[Any]] = None):
         self.data = Array([None])
         if init is not None:
             for elem in init: self.data.push(elem)
