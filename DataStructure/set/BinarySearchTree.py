@@ -58,6 +58,24 @@ class BinarySearchTree(BinaryTree):
             if self.right is None: return self
             return self.right.search(val)
     
+    def get_prev(self):
+        if self.left is not None: return self.left.get_max()
+        p = self
+        while p.father is not None:
+            if p.father.left is p:
+                p = p.father
+            else:
+                return p.father
+    
+    def get_next(self):
+        if self.right is not None: return self.right.get_min()
+        p = self
+        while p.father is not None:
+            if p.father.right is p:
+                p = p.father
+            else:
+                return p.father
+    
     def add(self, val: Any):
         if self.val is None:
             self.val = val
@@ -132,15 +150,21 @@ class BinarySearchTree(BinaryTree):
 
 if __name__ == '__main__':
     bst = BinarySearchTree()
-    for elem in range(10):
-        bst.add(elem)
     import random
     random.seed(0)
-    items = list(range(10**4))
+    items = [random.randint(-10000, 10000) for i in range(10**4)]
     random.shuffle(items)
     for elem in items:
         bst.add(elem)
     print(bst.depth)
-    for elem in items:
-        bst.remove(elem)
-        print(elem)
+    next_list, prev_list = [], []
+    p = bst.search(-float('inf'))
+    while p is not None:
+        next_list.append(p.val)
+        p = p.get_next()
+    p = bst.search(float('inf'))
+    while p is not None:
+        prev_list.append(p.val)
+        p = p.get_prev()
+    print(next_list == list(bst.mid_order()) == sorted(set(items)))
+    print(prev_list == sorted(set(items), reverse=True))
