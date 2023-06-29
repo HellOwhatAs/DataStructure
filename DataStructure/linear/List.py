@@ -67,14 +67,24 @@ class List:
         return self.length == 0
 
     def reverse(self):
-        raise NotImplementedError("reverse of List not implemented")
+        if self.empty(): return
+        new_list = None
+        self.tail = self.head.next
+        while self.head.next is not None:
+            tmp = self.head.next.next
+            self.head.next.next = new_list
+            new_list = self.head.next
+            self.head.next = tmp
+        self.head.next = new_list
 
 
 if __name__ == '__main__':
     l = List([1,2,3,4])
+    print(l)
+    l.reverse()
     l.push(1234)
     print(l)
-    l.pop()
+    print(l.pop())
     print(l)
     print(l[2])
     l[2] = -10
@@ -86,4 +96,6 @@ if __name__ == '__main__':
     print(l.pop(0))
     print(l)
     print(l.pop(2))
+    print(l)
+    l.reverse()
     print(l)
