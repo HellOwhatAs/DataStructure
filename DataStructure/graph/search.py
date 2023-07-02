@@ -9,20 +9,20 @@ except ImportError:
     sys.path.pop()
     del sys, os
 
-def __dfs(g: Graph, visited: List[bool], start: int, f: Callable[[int], None]):
+def __dfs(g: Graph, visited: List[bool], start: int, on_visit: Callable[[int], None]):
     if visited[start]: return
     visited[start] =  True
-    f(start, visited)
+    on_visit(start, visited)
     for neibour, weight in g.get_neibours(start):
-        __dfs(g, visited, neibour, f)
+        __dfs(g, visited, neibour, on_visit)
 
-def dfs(g: Graph, f: Callable[[int, List[bool]], None], start: Optional[int] = None, *, newtree: Optional[Callable[[List[bool]], None]] = None):
+def dfs(g: Graph, on_visit: Callable[[int, List[bool]], None], start: Optional[int] = None, *, on_tree_over: Optional[Callable[[List[bool]], None]] = None):
     visited = [False] * len(g)
-    if start is not None: __dfs(g, visited, start, f)
+    if start is not None: __dfs(g, visited, start, on_visit)
     for i in range(len(g)):
         if not visited[i]:
-            __dfs(g, visited, i, f)
-            if newtree is not None: newtree(visited)
+            __dfs(g, visited, i, on_visit)
+            if on_tree_over is not None: on_tree_over(visited)
 
 if __name__ == '__main__':
 
@@ -39,6 +39,6 @@ if __name__ == '__main__':
     ):
         g.add_edge(edge[0]-1, edge[1]-1)
 
-    dfs(g, lambda x, y: print(x + 1, end=' '), newtree=print)
+    dfs(g, lambda x, y: print(x + 1, end=' '), on_tree_over=print)
 
     print(g.edge_weight(2, 0))
