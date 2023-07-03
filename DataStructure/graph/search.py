@@ -1,24 +1,25 @@
-from typing import Callable, List, Optional
+from typing import Callable, List, Optional, Union
 
 try:
-    from .Graph import Graph
+    from .Graph import Graph, DirectedGraph
     from ..linear.Queue import Queue
 except ImportError:
     import sys, os
     sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
-    from DataStructure.graph.Graph import Graph
+    from DataStructure.graph.Graph import Graph, DirectedGraph
     from DataStructure.linear.Queue import Queue
     sys.path.pop()
     del sys, os
 
-def __dfs(g: Graph, visited: List[bool], start: int, on_visit: Callable[[int], None]):
+def __dfs(g: Union[Graph, DirectedGraph], visited: List[bool], start: int, on_visit: Callable[[int], None]):
     if visited[start]: return
     visited[start] =  True
     on_visit(start, visited)
     for neibour, weight in g.get_neibours(start):
         __dfs(g, visited, neibour, on_visit)
 
-def dfs(g: Graph, on_visit: Callable[[int, List[bool]], None], start: Optional[int] = None, *, on_tree_over: Optional[Callable[[List[bool]], bool]] = None):
+def dfs(g: Union[Graph, DirectedGraph], on_visit: Callable[[int, List[bool]], None], start: Optional[int] = None,
+        *, on_tree_over: Optional[Callable[[List[bool]], bool]] = None):
     visited = [False] * len(g)
     if start is not None:
         __dfs(g, visited, start, on_visit)
@@ -30,7 +31,7 @@ def dfs(g: Graph, on_visit: Callable[[int, List[bool]], None], start: Optional[i
             if on_tree_over is not None:
                 if on_tree_over(visited): return
 
-def __bfs(g: Graph, visited: List[bool], start: int, on_visit: Callable[[int], None]):
+def __bfs(g: Union[Graph, DirectedGraph], visited: List[bool], start: int, on_visit: Callable[[int], None]):
     q = Queue()
     q.push(start)
     while not q.empty():
@@ -41,7 +42,8 @@ def __bfs(g: Graph, visited: List[bool], start: int, on_visit: Callable[[int], N
         for neibour, weight in g.get_neibours(node):
             if not visited[neibour]: q.push(neibour)
 
-def bfs(g: Graph, on_visit: Callable[[int, List[bool]], None], start: Optional[int] = None, *, on_tree_over: Optional[Callable[[List[bool]], bool]] = None):
+def bfs(g: Union[Graph, DirectedGraph], on_visit: Callable[[int, List[bool]], None], start: Optional[int] = None,
+        *, on_tree_over: Optional[Callable[[List[bool]], bool]] = None):
     visited = [False] * len(g)
     if start is not None:
         __bfs(g, visited, start, on_visit)

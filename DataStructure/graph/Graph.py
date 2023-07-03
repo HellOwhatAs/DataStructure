@@ -26,7 +26,11 @@ class Graph(ABC):
     def get_neibours(self, node: int) -> Generator[Tuple[int, Real], None, None]:...
 
     @abstractmethod
-    def degree(self, node: int, *args) -> int:...
+    def degree(self, node: int) -> int:...
+
+class DirectedGraph(Graph):
+    @abstractmethod
+    def degree(self, node: int, degree_type: Literal['in', 'out']) -> int:...
 
 class AdjMatrixGraph(Graph):
     def __init__(self, num_nodes: int):
@@ -58,7 +62,7 @@ class AdjMatrixGraph(Graph):
         return sum((not isinf(elem)) for elem in self.mat[node]) + (not isinf(self.mat[node][node]))
         
 
-class DirectedAdjMatrixGraph(Graph):
+class DirectedAdjMatrixGraph(DirectedGraph):
     def __init__(self, num_nodes: int):
         self.n = num_nodes
         self.mat = [[inf] * self.n for _ in range(self.n)]
@@ -117,9 +121,9 @@ class AdjListGraph(Graph):
             yield k, v
 
     def degree(self, node: int) -> int:
-        return len(self.list[node])
+        return len(self.list[node]) + (node in self.list[node])
 
-class DirectedAdjListGraph(Graph):
+class DirectedAdjListGraph(DirectedGraph):
     def __init__(self, num_nodes: int):
         self.n = num_nodes
         self.list = [{} for _ in range(self.n)]
