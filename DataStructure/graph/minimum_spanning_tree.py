@@ -1,4 +1,4 @@
-from math import inf, isinf
+from math import inf
 
 try:
     from .Graph import Graph
