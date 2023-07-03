@@ -28,6 +28,9 @@ class Graph(ABC):
     @abstractmethod
     def degree(self, node: int) -> int:...
 
+    @abstractmethod
+    def edges(self) -> Generator[Tuple[int, int, Real], None, None]:...
+
 class DirectedGraph(Graph):
     @abstractmethod
     def degree(self, node: int, degree_type: Literal['in', 'out']) -> int:...
@@ -60,6 +63,12 @@ class AdjMatrixGraph(Graph):
 
     def degree(self, node: int) -> int:
         return sum((not isinf(elem)) for elem in self.mat[node]) + (not isinf(self.mat[node][node]))
+    
+    def edges(self) -> Generator[Tuple[int, int, Real], None, None]:
+        for start in range(self.n):
+            for end in range(start, self.n):
+                if not isinf(self.mat[start][end]):
+                    yield start, end, self.mat[start][end]
         
 
 class DirectedAdjMatrixGraph(DirectedGraph):
@@ -95,6 +104,12 @@ class DirectedAdjMatrixGraph(DirectedGraph):
             return sum((not isinf(elem)) for elem in self.mat[node])
         else: raise TypeError("Invalid degree_type")
 
+    def edges(self) -> Generator[Tuple[int, int, Real], None, None]:
+        for start in range(self.n):
+            for end in range(self.n):
+                if not isinf(self.mat[start][end]):
+                    yield start, end, self.mat[start][end]
+
 class AdjListGraph(Graph):
     def __init__(self, num_nodes: int):
         self.n = num_nodes
@@ -122,6 +137,12 @@ class AdjListGraph(Graph):
 
     def degree(self, node: int) -> int:
         return len(self.list[node]) + (node in self.list[node])
+    
+    def edges(self) -> Generator[Tuple[int, int, Real], None, None]:
+        for start in range(self.n):
+            for end in self.list[start]:
+                if end >= start:
+                    yield start, end, self.list[start][end]
 
 class DirectedAdjListGraph(DirectedGraph):
     def __init__(self, num_nodes: int):
@@ -154,6 +175,11 @@ class DirectedAdjListGraph(DirectedGraph):
             return len(self.list[node])
         else: raise TypeError("Invalid degree_type")
 
+    def edges(self) -> Generator[Tuple[int, int, Real], None, None]:
+        for start in range(self.n):
+            for end in self.list[start]:
+                yield start, end, self.list[start][end]
+
 if __name__ == '__main__':
     g = DirectedAdjListGraph(7)
     for edge in (
@@ -169,3 +195,6 @@ if __name__ == '__main__':
 
     for i in range(len(g)):
         print(i + 1, g.degree(i, 'in'), g.degree(i, 'out'))
+
+    for edge in g.edges():
+        print(edge)
