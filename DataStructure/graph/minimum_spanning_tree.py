@@ -1,3 +1,5 @@
+from math import inf, isinf
+
 try:
     from .Graph import Graph
     from ..set.DisjointSet import DisjointSet
@@ -24,6 +26,28 @@ def kruskal(g: Graph):
             count += 1
     return ret
 
+def prim(g: Graph):
+    flag = [False] * len(g)
+    lowCost = [inf] * len(g)
+    startNode = [None] * len(g)
+    start = 0
+    ret = type(g)(len(g))
+    for _ in range(len(g) - 1):
+        for t, w in g.get_neibours(start):
+            if not flag[t] and w < lowCost[t]:
+                lowCost[t] = w
+                startNode[t] = start
+        flag[start] = True
+        
+        s, w = None, inf
+        for i in range(len(g)):
+            if not flag[i] and lowCost[i] < w:
+                w = lowCost[i]
+                s = i
+        ret.add_edge(start, s, w)
+        start = s
+    return ret
+
 if __name__ == '__main__':
     from Graph import AdjListGraph
     g = AdjListGraph(6)
@@ -39,3 +63,6 @@ if __name__ == '__main__':
 
     g2 = kruskal(g)
     print(list(g2.edges()))
+
+    g3 = prim(g)
+    print(list(g3.edges()))
