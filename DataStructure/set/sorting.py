@@ -76,7 +76,7 @@ class __RefPriorityQueue(PriorityQueue):
     def __init__(self, array) -> None:
         self.data = self.OffsetArray(array, -1)
         for idx in reversed(range(1, len(self) // 2 + 1)):
-            super()._PriorityQueue__percolate_down(idx)
+            getattr(super(), "_PriorityQueue__percolate_down")(idx)
 
 def HeapSort(a: List, *, inplace: bool = False):
     if not inplace:
