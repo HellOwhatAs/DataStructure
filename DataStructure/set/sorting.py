@@ -5,10 +5,10 @@ try:
     from ..tree.PriorityQueue import PriorityQueue
 except ImportError:
     import sys, os
-    sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../.."))
     from DataStructure.set.binary_search import binary_search
     from DataStructure.tree.PriorityQueue import PriorityQueue
-    sys.path.pop()
+    sys.path.pop(0)
     del sys, os
 
 def InsertSort(a: List, *, inplace: bool = False):

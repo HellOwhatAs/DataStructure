@@ -5,10 +5,10 @@ try:
     from ..linear.Queue import Queue
 except ImportError:
     import sys, os
-    sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../.."))
     from DataStructure.graph.Graph import Graph, DirectedGraph
     from DataStructure.linear.Queue import Queue
-    sys.path.pop()
+    sys.path.pop(0)
     del sys, os
 
 def __dfs(g: Union[Graph, DirectedGraph], visited: List[bool], start: int, on_visit: Callable[[int], None]):
