@@ -54,6 +54,22 @@ def dijkstra(g: Union[Graph, DirectedGraph], source: int, target: Optional[int] 
     if target is None: return dist, prev
     return dist[target], extract_path(prev, target)
 
+def bellman_ford(g: Union[Graph, DirectedGraph], source: int, target: Optional[int] = None):
+    prev: List[Optional[int]]
+    dist, prev = [inf] * len(g), [None] * len(g)
+    dist[source] = 0
+    for _ in range(len(g)):
+        flag = True
+        for s, t, w in g.edges():
+            if dist[s] + w < dist[t]:
+                dist[t] = dist[s] + w
+                prev[t] = s
+                flag = False
+        if flag: break
+    else: raise TypeError('exists negative circle in graph', {'dist': dist, 'prev': prev})
+    if target is None: return dist, prev
+    return dist[target], extract_path(prev, target)
+
 if __name__ == '__main__':
     from Graph import DirectedAdjListGraph
     g = DirectedAdjListGraph(7)
@@ -71,4 +87,7 @@ if __name__ == '__main__':
     print(dist, path)
     
     dist, path = dijkstra(g, 2, 4)
+    print(dist, path)
+
+    dist, path = bellman_ford(g, 2, 4)
     print(dist, path)
