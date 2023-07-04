@@ -1,13 +1,15 @@
-from typing import Callable, List, Optional, Union
+from typing import Callable, List, Optional, Union, overload
 
 try:
     from .Graph import Graph, DirectedGraph
     from ..linear.Queue import Queue
+    from ..tree.PriorityQueue import PriorityQueue
 except ImportError:
     import sys, os
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../.."))
     from DataStructure.graph.Graph import Graph, DirectedGraph
     from DataStructure.linear.Queue import Queue
+    from DataStructure.tree.PriorityQueue import PriorityQueue
     sys.path.pop(0)
     del sys, os
 
@@ -55,9 +57,40 @@ def bfs(g: Union[Graph, DirectedGraph], on_visit: Callable[[int, List[bool]], No
             if on_tree_over is not None:
                 if on_tree_over(visited): return
 
-if __name__ == '__main__':
+@overload
+def euler_path(g: DirectedGraph, start: Optional[int] = None):...
 
-    from Graph import DirectedAdjListGraph
+def __directed_euler_path_dfs(curr: int, heap_g: List[PriorityQueue]):
+    while not heap_g[curr].empty():
+        tmp, weight = heap_g[curr].pop()
+        if weight > 1: heap_g[curr].push((tmp, weight - 1))
+        for _ in __directed_euler_path_dfs(tmp, heap_g): yield _
+    yield curr
+
+def __directed_euler_path(g: DirectedGraph, start: Optional[int] = None):
+    if start is None:
+        raise NotImplementedError('auto start not implemented')
+    ret = list(__directed_euler_path_dfs(start, [PriorityQueue(g.get_neibours(i)) for i in range(len(g))]))
+    ret.reverse()
+    return ret
+
+@overload
+def euler_path(g: Graph, start: Optional[int] = None):...
+
+def __euler_path(g: Graph, start: Optional[int] = None):
+    raise NotImplementedError('euler path undirected graph not implemented')
+
+def euler_path(g: Union[Graph, DirectedGraph], start: Optional[int] = None):
+    if isinstance(g, DirectedGraph): return __directed_euler_path(g, start)
+    return __euler_path(g, start)
+
+if __name__ == '__main__':
+    import sys, os
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../.."))
+    from DataStructure.graph.Graph import DirectedAdjListGraph
+    sys.path.pop(0)
+    del sys, os
+
     g = DirectedAdjListGraph(7)
     for edge in (
         (1, 2),
@@ -72,3 +105,9 @@ if __name__ == '__main__':
 
     dfs(g, lambda x, y: print(x + 1, end=' '), start=4, on_tree_over=print)
     bfs(g, lambda x, y: print(x + 1, end=' '), start=4, on_tree_over=print)
+
+    g2 = DirectedAdjListGraph(6)
+    for edge in (
+        (0, 1), (1, 2), (2, 3), (3, 1), (1, 4), (4, 3), (3, 5), (5, 4), (4, 2), (2, 0)
+    ):g2.add_edge(*edge)
+    print(euler_path(g2, 0))
