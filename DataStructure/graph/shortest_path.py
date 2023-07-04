@@ -1,4 +1,4 @@
-from typing import Union, List, Optional
+from typing import Union, List, Optional, overload
 from math import inf, isinf
 from numbers import Real
 
@@ -15,11 +15,26 @@ except ImportError:
     sys.path.pop(0)
     del sys, os
 
+@overload
 def extract_path(prev: List[Optional[int]], target: int):
+    '''extract single source path to target'''
+@overload
+def extract_path(prev: List[List[Optional[int]]], source: int, target: int):
+    '''extract floyd path from source to target'''
+def extract_path(prev, *args):
     path = []
-    while target is not None:
-        path.append(target)
-        target = prev[target]
+    if len(args) == 1 and isinstance(args[0], int) and isinstance(prev, List):
+        target, = args
+        while target is not None:
+            path.append(target)
+            target = prev[target]
+    elif len(args) == 2 and isinstance(args[0], int) and isinstance(args[1], int) and isinstance(prev, List) and all(isinstance(elem, List) for elem in prev):
+        source, target = args
+        while target != source and target is not None:
+            path.append(target)
+            target = prev[source][target]
+        path.append(source)
+    else: raise TypeError("no matching function to call")
     path.reverse()
     return path
 
@@ -70,6 +85,20 @@ def bellman_ford(g: Union[Graph, DirectedGraph], source: int, target: Optional[i
     if target is None: return dist, prev
     return dist[target], extract_path(prev, target)
 
+def directed_acyclic(g: DirectedGraph):
+    raise NotImplementedError('shortest path on DAG not implemented')
+
+def floyd(g: Union[Graph, DirectedGraph]):
+    dist = [[(0 if i == j else (g.edge_weight(i, j) if g.exist_edge(i, j) else inf)) for j in range(len(g))] for i in range(len(g))]
+    prev = [[(i if i != j and g.exist_edge(i, j) else None) for j in range(len(g))] for i in range(len(g))]
+    for k in range(len(g)):
+        for i in range(len(g)):
+            for j in range(len(g)):
+                if dist[i][k] + dist[k][j] < dist[i][j]:
+                    dist[i][j] = dist[i][k] + dist[k][j]
+                    prev[i][j] = prev[k][j]
+    return dist, prev
+
 if __name__ == '__main__':
     from Graph import DirectedAdjListGraph
     g = DirectedAdjListGraph(7)
@@ -91,3 +120,6 @@ if __name__ == '__main__':
 
     dist, path = bellman_ford(g, 2, 4)
     print(dist, path)
+
+    dist, prev = floyd(g)
+    print(dist[2][4], extract_path(prev, 2, 4))
