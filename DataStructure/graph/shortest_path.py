@@ -5,11 +5,13 @@ from numbers import Real
 try:
     from .Graph import Graph, DirectedGraph
     from ..linear.Queue import Queue
+    from ..tree.PriorityQueue import PriorityQueue
 except ImportError:
     import sys, os
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../.."))
     from DataStructure.graph.Graph import Graph, DirectedGraph
     from DataStructure.linear.Queue import Queue
+    from DataStructure.tree.PriorityQueue import PriorityQueue
     sys.path.pop(0)
     del sys, os
 
@@ -21,7 +23,8 @@ def extract_path(prev: List[Optional[int]], target: int):
     path.reverse()
     return path
 
-def unweighted(g: Union[Graph, DirectedGraph], source: int):
+def unweighted(g: Union[Graph, DirectedGraph], source: int, target: Optional[int] = None):
+    prev: List[Optional[int]]
     dist, prev = [inf] * len(g), [None] * len(g)
     dist[source] = 0
     q = Queue([source])
@@ -32,21 +35,40 @@ def unweighted(g: Union[Graph, DirectedGraph], source: int):
             dist[neibour] = dist[node] + 1
             prev[neibour] = node
             q.push(neibour)
-    return dist, prev
+    if target is None: return dist, prev
+    return dist[target], extract_path(prev, target)
+
+def dijkstra(g: Union[Graph, DirectedGraph], source: int, target: Optional[int] = None):
+    prev: List[Optional[int]]
+    dist, prev = [inf] * len(g), [None] * len(g)
+    dist[source] = 0
+    pq = PriorityQueue([(0, source)])
+    while not pq.empty():
+        d, node = pq.pop()
+        if d > dist[node]: continue
+        for neibour, weight in g.get_neibours(node):
+            if dist[neibour] > dist[node] + weight:
+                dist[neibour] = dist[node] + weight
+                prev[neibour] = node
+                pq.push((dist[neibour], neibour))
+    if target is None: return dist, prev
+    return dist[target], extract_path(prev, target)
 
 if __name__ == '__main__':
     from Graph import DirectedAdjListGraph
     g = DirectedAdjListGraph(7)
     for edge in (
-        (0, 1), (0, 3),
-        (1, 3), (1, 4),
-        (2, 0), (2, 5),
-        (3, 2), (3, 4), (3, 5), (3, 6),
-        (4, 6),
+        (0, 1, 2), (0, 3, 1),
+        (1, 3, 3), (1, 4, 10),
+        (2, 0, 4), (2, 5, 5),
+        (3, 2, 8), (3, 4, 2), (3, 5, 8), (3, 6, 4),
+        (4, 6, 6),
 
-        (6, 5)
+        (6, 5, 1)
     ):
         g.add_edge(*edge)
-    dist, prev = unweighted(g, 2)
-    print(dist[4])
-    print(extract_path(prev, 4))
+    dist, path = unweighted(g, 2, 4)
+    print(dist, path)
+    
+    dist, path = dijkstra(g, 2, 4)
+    print(dist, path)
