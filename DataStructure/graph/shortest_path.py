@@ -1,14 +1,16 @@
 from typing import Union, List, Optional, overload
 from math import inf, isinf
-from numbers import Real
+from copy import deepcopy
 
 try:
+    from .search import top_sort
     from .Graph import Graph, DirectedGraph
     from ..linear.Queue import Queue
     from ..tree.PriorityQueue import PriorityQueue
 except ImportError:
     import sys, os
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../.."))
+    from DataStructure.graph.search import top_sort
     from DataStructure.graph.Graph import Graph, DirectedGraph
     from DataStructure.linear.Queue import Queue
     from DataStructure.tree.PriorityQueue import PriorityQueue
@@ -85,8 +87,17 @@ def bellman_ford(g: Union[Graph, DirectedGraph], source: int, target: Optional[i
     if target is None: return dist, prev
     return dist[target], extract_path(prev, target)
 
-def directed_acyclic(g: DirectedGraph):
-    raise NotImplementedError('shortest path on DAG not implemented')
+def acyclic(g: DirectedGraph, source: int, target: Optional[int] = None):
+    prev: List[Optional[int]]
+    dist, prev = [inf] * len(g), [None] * len(g)
+    dist[source] = 0
+    for node in top_sort(g):
+        for neibour, weight in g.get_neibours(node):
+            if dist[neibour] > dist[node] + weight:
+                dist[neibour] = dist[node] + weight
+                prev[neibour] = node
+    if target is None: return dist, prev
+    return dist[target], extract_path(prev, target)
 
 def floyd(g: Union[Graph, DirectedGraph]):
     dist = [[(0 if i == j else (g.edge_weight(i, j) if g.exist_edge(i, j) else inf)) for j in range(len(g))] for i in range(len(g))]
@@ -106,12 +117,14 @@ if __name__ == '__main__':
         (0, 1, 2), (0, 3, 1),
         (1, 3, 3), (1, 4, 10),
         (2, 0, 4), (2, 5, 5),
-        (3, 2, 8), (3, 4, 2), (3, 5, 8), (3, 6, 4),
+        (3, 2, 2), (3, 4, 2), (3, 5, 8), (3, 6, 4),
         (4, 6, 6),
 
         (6, 5, 1)
-    ):
-        g.add_edge(*edge)
+    ): g.add_edge(*edge)
+
+    print(g.graphviz())
+
     dist, path = unweighted(g, 2, 4)
     print(dist, path)
     
@@ -123,3 +136,12 @@ if __name__ == '__main__':
 
     dist, prev = floyd(g)
     print(dist[2][4], extract_path(prev, 2, 4))
+
+    dag = deepcopy(g)
+    dag.remove_edge(6, 5), dag.remove_edge(3, 2), dag.remove_edge(3, 5)
+    dag.add_edge(5, 6, 1)
+
+    print(dag.graphviz())
+
+    dist, path = acyclic(dag, 0, 4)
+    print(dist, path)
