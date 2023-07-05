@@ -4,6 +4,7 @@ from numbers import Real
 from math import inf, isinf
 
 class Graph(ABC):
+    directed = False
     @abstractmethod
     def __init__(self, num_nodes: int):...
 
@@ -32,6 +33,7 @@ class Graph(ABC):
     def edges(self) -> Generator[Tuple[int, int, Real], None, None]:...
 
 class DirectedGraph(Graph):
+    directed = True
     @abstractmethod
     def degree(self, node: int, degree_type: Literal['in', 'out']) -> int:...
 

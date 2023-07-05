@@ -1,4 +1,5 @@
 from typing import Callable, List, Optional, Union, overload
+from copy import deepcopy
 
 try:
     from .Graph import Graph, DirectedGraph
@@ -73,6 +74,7 @@ def __directed_euler_path(g: DirectedGraph, start: Optional[int] = None):
     if start is None:
         if len(unbalanced) == 0: start = 0
         else: start = unbalanced[0][0]
+    elif len(unbalanced) != 0 and start != unbalanced[0][0]: raise TypeError(f'start {start} invalid (start must be {unbalanced[0][0]})')
     ret = list(__directed_euler_path_dfs(start, [PriorityQueue(g.get_neibours(i)) for i in range(len(g))]))
     ret.reverse()
     return ret
@@ -80,20 +82,39 @@ def __directed_euler_path(g: DirectedGraph, start: Optional[int] = None):
 @overload
 def euler_path(g: Graph, start: Optional[int] = None):...
 
+def __euler_path_dfs(g: Graph, start: int):
+    while True:
+        yield start
+        try: neibour, weight = next(iter(g.get_neibours(start)))
+        except StopIteration: break
+        if weight == 1: g.remove_edge(start, neibour)
+        else: g.add_edge(start, neibour, weight - 1)
+        start = neibour
+
 def __euler_path(g: Graph, start: Optional[int] = None):
-    raise NotImplementedError('euler path undirected graph not implemented')
+    unbalanced = [i for i in range(len(g)) if (g.degree(i) & 1)]
+    if len(unbalanced) == 1 or len(unbalanced) > 2: raise TypeError(f"{g} does not exists euler path")
+    if start is None:
+        if len(unbalanced) == 0: start = 0
+        else: start = unbalanced[0]
+    elif len(unbalanced) != 0 and start not in unbalanced: raise TypeError(f'start {start} invalid (start must in {unbalanced})')
+    g2 = deepcopy(g)
+    path = list(__euler_path_dfs(g2, start))
+    for node in range(len(g2)):
+        while g2.degree(node):
+            subpath = list(__euler_path_dfs(g2, node))
+            assert subpath[0] == subpath[-1]
+            idx = path.index(subpath[0])
+            path[idx: idx + 1] = subpath
+    return path
 
 def euler_path(g: Union[Graph, DirectedGraph], start: Optional[int] = None):
-    if isinstance(g, DirectedGraph): return __directed_euler_path(g, start)
+    if g.directed: return __directed_euler_path(g, start)
     return __euler_path(g, start)
 
 if __name__ == '__main__':
-    import sys, os
-    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../.."))
-    from DataStructure.graph.Graph import DirectedAdjListGraph
-    sys.path.pop(0)
-    del sys, os
-
+    from Graph import DirectedAdjListGraph, AdjListGraph
+    
     g = DirectedAdjListGraph(7)
     for edge in (
         (1, 2),
@@ -111,6 +132,12 @@ if __name__ == '__main__':
 
     g2 = DirectedAdjListGraph(6)
     for edge in (
-        (0, 1), (1, 2), (2, 3), (3, 1), (1, 4), (4, 3), (3, 5), (5, 4), (4, 2), (2, 0)
+        (0, 1), (1, 2), (2, 3), (3, 1), (1, 4), (3, 5), (5, 4), (4, 2), (2, 0)
     ):g2.add_edge(*edge)
-    print(euler_path(g2))
+    print(euler_path(g2, 3))
+
+    g3 = AdjListGraph(11)
+    for s in range(len(g3)):
+        for e in range(s + 1, len(g3)):
+            g3.add_edge(s, e)
+    print(euler_path(g3))
