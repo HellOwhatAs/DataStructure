@@ -5,12 +5,14 @@ try:
     from .Graph import Graph, DirectedGraph
     from ..linear.Queue import Queue
     from ..tree.PriorityQueue import PriorityQueue
+    from ..set.DisjointSet import DisjointSet
 except ImportError:
     import sys, os
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../.."))
     from DataStructure.graph.Graph import Graph, DirectedGraph
     from DataStructure.linear.Queue import Queue
     from DataStructure.tree.PriorityQueue import PriorityQueue
+    from DataStructure.set.DisjointSet import DisjointSet
     sys.path.pop(0)
     del sys, os
 
@@ -112,6 +114,21 @@ def euler_path(g: Union[Graph, DirectedGraph], start: Optional[int] = None):
     if g.directed: return __directed_euler_path(g, start)
     return __euler_path(g, start)
 
+def __connected_components(g: Graph):
+    ret = DisjointSet(len(g))
+    vis = [False] * len(g)
+    for i in range(len(g)):
+        if vis[i]: continue
+        __dfs(g, vis, i, lambda x, _: ret.union(i, x))
+    return ret
+
+def __directed_connected_components(g: DirectedGraph):
+    raise NotImplementedError('connected components on directed graph not implemented')
+
+def connected_components(g: Union[Graph, DirectedGraph]) -> DisjointSet:
+    if g.directed: return __directed_connected_components(g)
+    return __connected_components(g)
+
 if __name__ == '__main__':
     from Graph import DirectedAdjListGraph, AdjListGraph
     
@@ -141,3 +158,10 @@ if __name__ == '__main__':
         for e in range(s + 1, len(g3)):
             g3.add_edge(s, e)
     print(euler_path(g3))
+
+    g4 = AdjListGraph(4)
+    for edge in (
+        (0, 1), (0, 2)
+    ): g4.add_edge(*edge)
+    djs = connected_components(g4)
+    print([djs.find(i) for i in range(len(g4))])
