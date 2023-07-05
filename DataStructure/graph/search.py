@@ -150,6 +150,27 @@ def connected_components(g: Union[Graph, DirectedGraph]) -> DisjointSet:
     if g.directed: return __directed_connected_components(g)
     return __connected_components(g)
 
+def top_sort(g: DirectedGraph) -> List[int]:
+    in_degree = [g.degree(i, 'in') for i in range(len(g))]
+    err = TypeError(f"{g} not DAG, unable topological sort")
+    starts = [node for node in range(len(g)) if in_degree[node] == 0]
+    if not starts: raise err
+
+    finish_count = [0] * len(g)
+    q = Queue(starts)
+    ret = []
+    while not q.empty():
+        node = q.pop()
+        if finish_count[node] is None: continue
+        finish_count[node] = None
+        ret.append(node)
+        for neibour, _ in g.get_neibours(node):
+            finish_count[neibour] += 1
+            if finish_count[neibour] == in_degree[neibour]:
+                q.push(neibour)
+    if len(ret) != len(g): raise err
+    return ret
+
 if __name__ == '__main__':
     from Graph import DirectedAdjListGraph, AdjListGraph
     
@@ -199,3 +220,13 @@ if __name__ == '__main__':
     ): g5.add_edge(edge[0] - 1, edge[1] - 1)
     djs = connected_components(g5)
     print([djs.find(i) for i in range(len(g5))])
+
+    g6 = DirectedAdjListGraph(7)
+    for edge in (
+        (1, 2), (1, 3),
+        (2, 4), (2, 5), (2, 6),
+        (3, 5), (3, 7),
+        (5, 6), (5, 7),
+        (6, 4)
+    ): g6.add_edge(edge[0] - 1, edge[1] - 1)
+    print(top_sort(g6))
