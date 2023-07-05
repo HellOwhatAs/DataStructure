@@ -1,5 +1,6 @@
 from typing import Callable, List, Optional, Union, overload
 from copy import deepcopy
+from math import inf
 
 try:
     from .Graph import Graph, DirectedGraph
@@ -122,8 +123,28 @@ def __connected_components(g: Graph):
         __dfs(g, vis, i, lambda x, _: ret.union(i, x))
     return ret
 
+def __directed_connected_components_dfs(g: DirectedGraph, start: int, idxer: List[Optional[int]], count: List[int]):
+    if idxer[start] is not None: return
+    idxer[start] = inf
+    for neibour, _ in g.get_neibours(start):
+        __directed_connected_components_dfs(g, neibour, idxer, count)
+    idxer[start] = count[0]
+    count[0] += 1
+
 def __directed_connected_components(g: DirectedGraph):
-    raise NotImplementedError('connected components on directed graph not implemented')
+    idxer, count = [None] * len(g), [0]
+    for i in range(len(g)):
+        if idxer[i] is not None: continue
+        __directed_connected_components_dfs(g, i, idxer, count)
+    
+    g1 = type(g)(len(g))
+    for s, t, _ in g.edges(): g1.add_edge(t, s)
+    ret = DisjointSet(len(g1))
+    vis = [False] * len(g1)
+    for i in sorted(range(len(g1)), key=lambda x: -idxer[x]):
+        if vis[i]: continue
+        __dfs(g1, vis, i, lambda x, _: ret.union(i, x))
+    return ret
 
 def connected_components(g: Union[Graph, DirectedGraph]) -> DisjointSet:
     if g.directed: return __directed_connected_components(g)
@@ -165,3 +186,16 @@ if __name__ == '__main__':
     ): g4.add_edge(*edge)
     djs = connected_components(g4)
     print([djs.find(i) for i in range(len(g4))])
+
+    g5 = DirectedAdjListGraph(8)
+    for edge in (
+        (1, 2), (1, 5),
+        (2, 3), (2, 4),
+        (3, 1),
+        (5, 6),
+        (6, 7),
+        (7, 5), (7, 8),
+        (8, 5)
+    ): g5.add_edge(edge[0] - 1, edge[1] - 1)
+    djs = connected_components(g5)
+    print([djs.find(i) for i in range(len(g5))])
