@@ -5,6 +5,7 @@ from math import inf, isinf
 
 class Graph(ABC):
     directed = False
+    
     @abstractmethod
     def __init__(self, num_nodes: int):...
 
@@ -32,10 +33,17 @@ class Graph(ABC):
     @abstractmethod
     def edges(self) -> Generator[Tuple[int, int, Real], None, None]:...
 
+    def graphviz(self):
+        return '\n'.join(('graph{', *(f'{s} -- {t} [label={w}];' for s, t, w in self.edges()), '}'))
+
 class DirectedGraph(Graph):
     directed = True
+    
     @abstractmethod
     def degree(self, node: int, degree_type: Literal['in', 'out']) -> int:...
+
+    def graphviz(self):
+        return '\n'.join(('digraph{', *(f'{s} -> {t} [label={w}];' for s, t, w in self.edges()), '}'))
 
 class AdjMatrixGraph(Graph):
     def __init__(self, num_nodes: int):
