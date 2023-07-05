@@ -68,8 +68,11 @@ def __directed_euler_path_dfs(curr: int, heap_g: List[PriorityQueue]):
     yield curr
 
 def __directed_euler_path(g: DirectedGraph, start: Optional[int] = None):
+    unbalanced = sorted([(i, tmp) for i in range(len(g)) if (tmp := g.degree(i, 'in') - g.degree(i, 'out')) != 0], key=lambda x: x[1])
+    if len(unbalanced) == 1 or len(unbalanced) > 2: raise TypeError(f"{g} does not exists euler path")
     if start is None:
-        raise NotImplementedError('auto start not implemented')
+        if len(unbalanced) == 0: start = 0
+        else: start = unbalanced[0][0]
     ret = list(__directed_euler_path_dfs(start, [PriorityQueue(g.get_neibours(i)) for i in range(len(g))]))
     ret.reverse()
     return ret
@@ -110,4 +113,4 @@ if __name__ == '__main__':
     for edge in (
         (0, 1), (1, 2), (2, 3), (3, 1), (1, 4), (4, 3), (3, 5), (5, 4), (4, 2), (2, 0)
     ):g2.add_edge(*edge)
-    print(euler_path(g2, 0))
+    print(euler_path(g2))
