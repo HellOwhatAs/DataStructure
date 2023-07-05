@@ -159,16 +159,12 @@ def MergeSort(a: List):
 def __non_neg_bucketsort(a: List, *, num_buckets: int = 10):
     div = 1
     buckets = [[] for _ in range(num_buckets)]
-    while True:
+    max_elem = max(a)
+    while max_elem >= div:
         for elem in a:
             buckets[(elem // div) % num_buckets].append(elem)
         a = sum(buckets, [])
-        count = 0
-        for bucket in buckets:
-            if bucket:
-                bucket.clear()
-                count += 1
-        if count == 1: break
+        for bucket in buckets: bucket.clear()
         div *= num_buckets
     return a
 
@@ -194,3 +190,5 @@ if __name__ == '__main__':
     print(l)
     print(ShellSort(l, inplace=True) == sorted(l))
     print(l)
+
+    print(BucketSort([110, 100, 0]))

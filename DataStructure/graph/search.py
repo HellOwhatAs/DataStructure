@@ -59,7 +59,7 @@ def bfs(g: Union[Graph, DirectedGraph], on_visit: Callable[[int, List[bool]], No
                 if on_tree_over(visited): return
 
 @overload
-def euler_path(g: DirectedGraph, start: Optional[int] = None):...
+def euler_path(g: DirectedGraph, start: Optional[int] = None) -> List[int]:...
 
 def __directed_euler_path_dfs(curr: int, heap_g: List[PriorityQueue]):
     while not heap_g[curr].empty():
@@ -80,7 +80,7 @@ def __directed_euler_path(g: DirectedGraph, start: Optional[int] = None):
     return ret
 
 @overload
-def euler_path(g: Graph, start: Optional[int] = None):...
+def euler_path(g: Graph, start: Optional[int] = None) -> List[int]:...
 
 def __euler_path_dfs(g: Graph, start: int):
     while True:
