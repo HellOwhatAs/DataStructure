@@ -1,5 +1,6 @@
 from typing import List, Optional
 from copy import deepcopy
+import random
 try:
     from .binary_search import binary_search
     from ..tree.PriorityQueue import PriorityQueue
@@ -101,6 +102,8 @@ def BubbleSort(a: List, *, inplace: bool = False):
 
 def __divide(a: List, start: int, end: int):
     if end - start + 1 <= 1: return start
+    randi_dx = random.randint(start, end)
+    a[start], a[randi_dx] = a[randi_dx], a[start]
     pivot = a[start]
     activate = True
     while start < end:
@@ -120,18 +123,13 @@ def __divide(a: List, start: int, end: int):
     return start
 
 def QuickSort(a: List, start: int = 0, end: Optional[int] = None, *, inplace: bool = False):
+    if not inplace: a = deepcopy(a)
     if end is None: end = len(a) - 1
-    if not inplace:
-        a = a[start: end + 1]
-        if len(a) <= 1: return a
-        pivot = a[0]
-        return QuickSort([i for i in a if i < pivot]) + [pivot] * (a.count(pivot)) + QuickSort([i for i in a if i > pivot])
-    else:
-        if end - start + 1 <= 1: return a
-        mid = __divide(a, start, end)
-        QuickSort(a, start, mid - 1, inplace=True)
-        QuickSort(a, mid + 1, end, inplace=True)
-        return a
+    if end - start + 1 <= 1: return a
+    mid = __divide(a, start, end)
+    QuickSort(a, start, mid - 1, inplace=True)
+    QuickSort(a, mid + 1, end, inplace=True)
+    return a
 
 def __merge(a: List, b: List):
     ret = []
@@ -188,7 +186,5 @@ if __name__ == '__main__':
     l = [*l] * 3
     random.shuffle(l)
     print(l)
-    print(ShellSort(l, inplace=True) == sorted(l))
+    print(QuickSort(l, inplace=True) == sorted(l))
     print(l)
-
-    print(BucketSort([110, 100, 0]))
