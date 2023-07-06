@@ -4,7 +4,10 @@ from numbers import Real
 from math import inf, isinf
 
 class Graph(ABC):
-    directed = False
+    
+    @property
+    def directed(self):
+        return False
     
     @abstractmethod
     def __init__(self, num_nodes: int):...
@@ -37,7 +40,10 @@ class Graph(ABC):
         return '\n'.join(('graph{', *(f'{s} -- {t} [label={w}];' for s, t, w in self.edges()), '}'))
 
 class DirectedGraph(Graph):
-    directed = True
+    
+    @property
+    def directed(self):
+        return True
     
     @abstractmethod
     def degree(self, node: int, degree_type: Literal['in', 'out']) -> int:...
