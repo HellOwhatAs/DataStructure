@@ -20,7 +20,7 @@ class HuffmanTree(BinaryTree):
         self.right: Optional[HuffmanTree]
 
     @classmethod
-    def build(cls, data: Dict[Any, Real]):
+    def build(cls, data: Dict[Any, Real]) -> 'HuffmanTree':
         heap = PriorityQueue([cls(k, v) for k, v in data.items()])
         while len(heap) > 1:
             a, b = heap.pop(), heap.pop()

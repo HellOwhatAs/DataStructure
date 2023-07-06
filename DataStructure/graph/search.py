@@ -171,6 +171,36 @@ def top_sort(g: DirectedGraph) -> List[int]:
     if len(ret) != len(g): raise err
     return ret
 
+def critical_path(g: DirectedGraph, start: Optional[int] = None, end: Optional[int] = None):
+    no_in, no_out = set(), set()
+    for i in range(len(g)):
+        if g.degree(i, 'in') == 0: no_in.add(i)
+        if g.degree(i, 'out') == 0: no_out.add(i)
+    if start is None: 
+        if len(no_in) == 1:  start, = no_in
+        else: raise TypeError(f'cannot determin start (start must in {no_in})')
+    elif g.degree(start, 'in') != 0: raise TypeError(f'start {start} invalid (start must in {no_in})')
+    if end is None:
+        if len(no_out) == 1: end, = no_out
+        else: raise TypeError(f'cannot determin end (end must in {no_out})')
+    elif g.degree(end, 'out') != 0: raise TypeError(f'end {end} invalid (end must in {no_out})')
+
+    earliest = [-inf] * len(g)
+    earliest[start] = 0
+    for node in top_sort(g):
+        for neibour, weight in g.get_neibours(node):
+            earliest[neibour] = max(earliest[neibour], earliest[node] + weight)
+    
+    g2 = type(g)(len(g))
+    for s, t, w in g.edges(): g2.add_edge(t, s, w)
+    latest = [inf] * len(g2)
+    latest[end] = earliest[end]
+    for node in top_sort(g2):
+        for neibour, weight in g2.get_neibours(node):
+            latest[neibour] = min(latest[neibour], latest[node] - weight)
+    
+    return earliest, latest
+
 if __name__ == '__main__':
     from Graph import DirectedAdjListGraph, AdjListGraph
     
@@ -230,3 +260,15 @@ if __name__ == '__main__':
         (6, 4)
     ): g6.add_edge(edge[0] - 1, edge[1] - 1)
     print(top_sort(g6))
+
+    g7 = DirectedAdjListGraph(7)
+    for s, t, w in (
+        (0, 1, 5),
+        (0, 2, 5),
+        (1, 3, 1),
+        (2, 3, 1),
+        (4, 1, 100),
+        (3, 5, 4),
+        (3, 6, 9)
+    ): g7.add_edge(s, t, w)
+    print(critical_path(g7, 0, 5))
