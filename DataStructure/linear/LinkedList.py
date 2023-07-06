@@ -1,19 +1,18 @@
 from typing import Iterable, Any, Optional
 
-class Node:
-    def __init__(self, val: Any, next: Optional['Node']):
-        self.val = val
-        self.next = next
-
-class List:
+class LinkedList:
+    class Node:
+        def __init__(self, val: Any, next: Optional['LinkedList.Node']):
+            self.val = val
+            self.next = next
     def __init__(self, init: Optional[Iterable[Any]] = None):
-        self.head = Node(0, None)
+        self.head = self.Node(0, None)
         self.tail = self.head
         if init:
             for i in init: self.push(i)
 
     def push(self, val: Any):
-        self.tail.next = Node(val, None)
+        self.tail.next = self.Node(val, None)
         self.tail = self.tail.next
         self.head.val += 1
 
@@ -60,7 +59,7 @@ class List:
     def insert(self, idx: int, val: Any):
         p = self.head
         for _ in range(idx): p = p.next
-        p.next = Node(val, p.next)
+        p.next = self.Node(val, p.next)
         self.head.val += 1
         
     def empty(self):
@@ -79,7 +78,7 @@ class List:
 
 
 if __name__ == '__main__':
-    l = List([1,2,3,4])
+    l = LinkedList([1,2,3,4])
     print(l)
     l.reverse()
     l.push(1234)

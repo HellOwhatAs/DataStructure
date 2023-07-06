@@ -1,18 +1,18 @@
 from typing import Iterable, Any, Optional
 try:
-    from .List import List
+    from .LinkedList import LinkedList
     from .Array import Array
     from ..tree.PriorityQueue import PriorityQueue
 except ImportError:
     import sys, os
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../.."))
-    from DataStructure.linear.List import List
+    from DataStructure.linear.LinkedList import LinkedList
     from DataStructure.linear.Array import Array
     from DataStructure.tree.PriorityQueue import PriorityQueue
     sys.path.pop(0)
     del sys, os
 
-class Queue(List):
+class Queue(LinkedList):
     def __init__(self, init: Optional[Iterable[Any]] = None):
         super().__init__(init)
 
@@ -87,7 +87,7 @@ if __name__ == '__main__':
 
     cq = CircularQueue(10)
     for i in range(10):
-        for j in range(6):
+        for j in range(5):
             cq.push(i*100 + j)
             print(cq, len(cq))
         for j in range(5):
