@@ -37,7 +37,7 @@ class Graph(ABC):
     def edges(self) -> Generator[Tuple[int, int, Real], None, None]:...
 
     def graphviz(self):
-        return '\n'.join(('graph{', *(f'{s} -- {t} [label={w}];' for s, t, w in self.edges()), '}'))
+        return '\n'.join(('graph{', *(f'{node};' for node in range(len(self))), *(f'{s} -- {t} [label={w}];' for s, t, w in self.edges()), '}'))
     
     @overload
     def renderHTML(self, filename: str, *, engine: Literal['circo', 'dot', 'fdp', 'sfdp', 'neato', 'osage', 'patchwork', 'twopi'] = 'dot') -> None:...
@@ -70,7 +70,7 @@ class DirectedGraph(Graph):
     def degree(self, node: int, degree_type: Literal['in', 'out']) -> int:...
 
     def graphviz(self):
-        return '\n'.join(('digraph{', *(f'{s} -> {t} [label={w}];' for s, t, w in self.edges()), '}'))
+        return '\n'.join(('digraph{', *(f'{node};' for node in range(len(self))), *(f'{s} -> {t} [label={w}];' for s, t, w in self.edges()), '}'))
 
 class AdjMatrixGraph(Graph):
     def __init__(self, num_nodes: int):
