@@ -1,4 +1,4 @@
-from typing import Generator, Tuple, Literal
+from typing import Generator, Tuple, Literal, Optional, overload
 from abc import ABC, abstractmethod
 from numbers import Real
 from math import inf, isinf
@@ -38,6 +38,27 @@ class Graph(ABC):
 
     def graphviz(self):
         return '\n'.join(('graph{', *(f'{s} -- {t} [label={w}];' for s, t, w in self.edges()), '}'))
+    
+    @overload
+    def renderHTML(self, filename: str, *, engine: Literal['circo', 'dot', 'fdp', 'sfdp', 'neato', 'osage', 'patchwork', 'twopi'] = 'dot') -> None:...
+    @overload
+    def renderHTML(self, *, engine: Literal['circo', 'dot', 'fdp', 'sfdp', 'neato', 'osage', 'patchwork', 'twopi'] = 'dot') -> str:...
+    def renderHTML(self, filename: Optional[str] = None, *, engine: Literal['circo', 'dot', 'fdp', 'sfdp', 'neato', 'osage', 'patchwork', 'twopi'] = 'dot'):
+        htmlcode = '''
+        <!DOCTYPE html>
+        <meta charset="utf-8">
+        <body>
+        <script src="https://cdn.jsdelivr.net/npm/d3@7.8.5/dist/d3.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@hpcc-js/wasm@2.13.0/dist/graphviz.umd.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/d3-graphviz@5.0.2/build/d3-graphviz.min.js"></script>
+        <div id="graph" style="text-align: center; width: 100%;"></div>
+        <script>
+        d3.select("#graph").graphviz().width('100%').height('95vh').fit(true).engine('{engine}')
+        .renderDot({dotcode});
+        </script>
+        '''.format(dotcode = repr(self.graphviz()), engine = engine)
+        if filename is None: return htmlcode
+        with open(filename, 'w', encoding='utf-8') as f: f.write(htmlcode)
 
 class DirectedGraph(Graph):
     
@@ -214,3 +235,5 @@ if __name__ == '__main__':
 
     for edge in g.edges():
         print(edge)
+    
+    g.renderHTML('./out.html', engine='circo')
