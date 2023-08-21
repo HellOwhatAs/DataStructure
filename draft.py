@@ -50,5 +50,3 @@ btree3 = BinaryTree.build(
 )
 
 print(btree == btree2 == btree3)
-
-
